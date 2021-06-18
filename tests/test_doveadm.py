@@ -25,7 +25,9 @@ DOVECOT_CONF_TMPL = os.environ.get(
 )
 DOVE_EXEC = os.environ.get('DOVE_EXEC', '/usr/sbin/dovecot')
 
-
+# we have to use non-privileged ports
+DOVECOT_POP3_PORT = 10110
+DOVECOT_IMAP_PORT = 10143
 DOVEADM_PORT = 8080
 DOVEADM_URI = 'http://localhost:{:d}/doveadm/v1'.format(DOVEADM_PORT)
 
@@ -92,6 +94,8 @@ class TestDovAdm(unittest.TestCase):
                     vmail_dir=cls.vmail_dir,
                     mail_temp_dir=mail_temp_dir,
                     doveadm_port=DOVEADM_PORT,
+                    imap_port=DOVECOT_IMAP_PORT,
+                    pop3_port=DOVECOT_POP3_PORT,
                     user=pwd.getpwuid(os.getuid()).pw_name,
                     group=grp.getgrgid(os.getgid()).gr_name,
                 )

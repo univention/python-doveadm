@@ -93,7 +93,7 @@ imap_max_line_length = 64 k
 imap_metadata = no
 imap_urlauth_host = 
 imap_urlauth_logout_format = in=%i out=%o
-imap_urlauth_port = 10143
+imap_urlauth_port = {imap_port}
 imapc_cmd_timeout = 5 mins
 imapc_connection_retry_count = 1
 imapc_connection_retry_interval = 1 secs
@@ -104,7 +104,7 @@ imapc_master_user =
 imapc_max_idle_time = 29 mins
 imapc_max_line_length = 0
 imapc_password = 
-imapc_port = 10143
+imapc_port = {imap_port}
 imapc_rawlog_dir = 
 imapc_sasl_mechanisms = 
 imapc_ssl = no
@@ -306,7 +306,7 @@ pop3c_features =
 pop3c_host = 
 pop3c_master_user = 
 pop3c_password = 
-pop3c_port = 10110
+pop3c_port = {pop3_port}
 pop3c_quick_received_date = no
 pop3c_rawlog_dir = 
 pop3c_ssl = no
@@ -637,7 +637,7 @@ service imap-login {{
   inet_listener imap {{
     address = 
     haproxy = no
-    port = 10143
+    port = {imap_port}
     reuse_port = no
     ssl = no
   }}
@@ -954,7 +954,7 @@ service pop3-login {{
   inet_listener pop3 {{
     address = 
     haproxy = no
-    port = 10110
+    port = {pop3_port}
     reuse_port = no
     ssl = no
   }}
