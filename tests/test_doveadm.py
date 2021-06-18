@@ -138,23 +138,29 @@ class TestDovAdm(unittest.TestCase):
             ],
             tag='tag1',
         )
+        mbox_status_cmd = MailboxStatus(
+            user='samik',
+            field=['all'],
+            mailbox_mask=[
+                'INBOX',
+                'INBOX/*',
+                '*',
+            ],
+            tag='tag2',
+        )
+        mbox_delete_cmd = MailboxDelete(
+            user='samik',
+            mailbox=[
+                "INBOX/myfolder"
+            ],
+            tag='tag3',
+        )
         res = dov_adm.submit(mbox_create_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
         self.assertEqual(res.tag, 'tag1')
         self.assertTrue(os.path.isdir(vmail_folder_path))
-        res = dov_adm.submit(
-            MailboxStatus(
-                user='samik',
-                field=['all'],
-                mailbox_mask=[
-                    'INBOX',
-                    'INBOX/*',
-                    '*',
-                ],
-                tag='tag2',
-            )
-        )
+        res = dov_adm.submit(mbox_status_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(len(res.data), 2)
         self.assertEqual(res.tag, 'tag2')
@@ -166,13 +172,6 @@ class TestDovAdm(unittest.TestCase):
             res = dov_adm.submit(mbox_create_cmd)
         self.assertEqual(ctx.exception.exit_code, 65)
         self.assertEqual(str(ctx.exception), 'doveadm error 65: Data error')
-        mbox_delete_cmd = MailboxDelete(
-            user='samik',
-            mailbox=[
-                "INBOX/myfolder"
-            ],
-            tag='tag3',
-        )
         res = dov_adm.submit(mbox_delete_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
@@ -182,6 +181,11 @@ class TestDovAdm(unittest.TestCase):
             res = dov_adm.submit(mbox_delete_cmd)
         self.assertEqual(ctx.exception.exit_code, 68)
         self.assertEqual(str(ctx.exception), 'doveadm error 68: User does not have session')
+        res = dov_adm.submit(mbox_status_cmd)
+        self.assertEqual(res.rtype, 'doveadmResponse')
+        # TODO: find out whether that's the right result
+        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.tag, 'tag2')
 
 
 if __name__ == '__main__':
