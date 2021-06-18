@@ -28,5 +28,5 @@ apt install -y dovecot-imapd dovecot-pop3d dovecot-lmtpd
 After that you can invoke the tests from within the source directory:
 
 ```
-python3 -m unittest -v
+python3 -B -m unittest -v
 ```
