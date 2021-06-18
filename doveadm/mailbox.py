@@ -69,3 +69,28 @@ class MailboxDelete(DovAdmCommand):
                 mailbox=mailbox,
             ),
         )
+
+
+class MailboxStatus(DovAdmCommand):
+    """
+    https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-status
+    """
+    command = 'mailboxStatus'
+
+    def __init__(
+            self,
+            user: str,
+            field: Optional[Sequence[str]] = None,
+            mailbox_mask: Optional[Sequence[str]] = None,
+            tag: Optional[str] = None,
+        ):
+        DovAdmCommand.__init__(
+            self,
+            self.command,
+            tag,
+            **dict(
+                user=user,
+                field=field,
+                mailboxMask=mailbox_mask,
+            ),
+        )

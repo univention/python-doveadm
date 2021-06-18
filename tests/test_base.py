@@ -6,7 +6,7 @@ basic tests which do not require running dovecot server
 import unittest
 
 from doveadm import DovAdmCommand, DovAdm
-from doveadm.mailbox import MailboxCreate, MailboxDelete
+from doveadm.mailbox import MailboxCreate, MailboxDelete, MailboxStatus
 
 
 class Test001DovAdmCommand(unittest.TestCase):
@@ -44,6 +44,21 @@ class Test001DovAdmCommand(unittest.TestCase):
     """
     test class doveadm.mailbox.MailboxCreate
     """
+
+    def test000_mailbox_status(self):
+        self.assertEqual(
+            MailboxStatus(
+                user='samik',
+                field=['all'],
+                mailbox_mask=[
+                    "INBOX",
+                    "INBOX/*",
+                    "*",
+                ],
+                tag='tag1',
+            ).payload,
+            '[["mailboxStatus", {"user": "samik", "field": ["all"], "mailboxMask": ["INBOX", "INBOX/*", "*"]}, "tag1"]]',
+        )
 
     def test001_mailbox_create(self):
         self.assertEqual(
