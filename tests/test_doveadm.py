@@ -155,11 +155,13 @@ class TestDovAdm(unittest.TestCase):
             ],
             tag='tag3',
         )
+        # create a new mailbox
         res = dov_adm.submit(mbox_create_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
         self.assertEqual(res.tag, 'tag1')
         self.assertTrue(os.path.isdir(vmail_folder_path))
+        # query status of created mailbox
         res = dov_adm.submit(mbox_status_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(len(res.data), 2)
@@ -168,22 +170,26 @@ class TestDovAdm(unittest.TestCase):
             {mbox_dat['mailbox'] for mbox_dat in res.data},
             {'INBOX', 'INBOX/myfolder'}
         )
+        # re-create a new mailbox must fail
         with self.assertRaises(DovAdmError) as ctx:
             res = dov_adm.submit(mbox_create_cmd)
         self.assertEqual(ctx.exception.exit_code, 65)
         self.assertEqual(str(ctx.exception), 'doveadm error 65: Data error')
+        # delete created mailbox
         res = dov_adm.submit(mbox_delete_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
         self.assertEqual(res.tag, 'tag3')
         self.assertFalse(os.path.isdir(vmail_folder_path))
+        # deleting same mailbox again must fail
         with self.assertRaises(DovAdmError) as ctx:
             res = dov_adm.submit(mbox_delete_cmd)
         self.assertEqual(ctx.exception.exit_code, 68)
         self.assertEqual(str(ctx.exception), 'doveadm error 68: User does not have session')
+        # query status of deleted mailbox
+        # TODO: find out whether that's the correct expected result
         res = dov_adm.submit(mbox_status_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
-        # TODO: find out whether that's the right result
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.tag, 'tag2')
 
