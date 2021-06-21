@@ -186,6 +186,19 @@ class TestDovAdm(unittest.TestCase):
         self.assertEqual(len(res.data), 3)
         self.assertEqual(res.tag, 'tag2')
         self.assertEqual(set(res.mailboxes), set(mbox_names))
+        # list mailboxes via IMAPresults
+        with imaplib.IMAP4('127.0.0.1', port=DOVECOT_IMAP_PORT) as imap_conn:
+            imap_conn.login('samik', DOVECOT_USER_PASSWORD)
+            ityp, mbox_lst = imap_conn.list()
+        self.assertEqual(ityp, 'OK')
+        self.assertEqual(
+            sorted(mbox_lst),
+            sorted([
+                b'(\\HasChildren) "/" INBOX',
+                b'(\\HasNoChildren) "/" INBOX/folder1',
+                b'(\\HasNoChildren) "/" INBOX/folder2',
+            ])
+        )
         # re-create a new mailbox must fail
         with self.assertRaises(DovAdmError) as ctx:
             res = dov_adm.submit(mbox_create_cmd)
@@ -202,6 +215,12 @@ class TestDovAdm(unittest.TestCase):
             res = dov_adm.submit(mbox_delete_cmd)
         self.assertEqual(ctx.exception.exit_code, 68)
         self.assertEqual(str(ctx.exception), 'doveadm error 68: User does not have session')
+        # list mailboxes via IMAP should return no results
+        with imaplib.IMAP4('127.0.0.1', port=DOVECOT_IMAP_PORT) as imap_conn:
+            imap_conn.login('samik', DOVECOT_USER_PASSWORD)
+            ityp, mbox_lst = imap_conn.list()
+        self.assertEqual(ityp, 'OK')
+        self.assertEqual(mbox_lst, [b'(\\HasNoChildren) "/" INBOX'])
         # query status of deleted mailbox
         # TODO: find out whether that's the correct expected result
         res = dov_adm.submit(mbox_status_cmd)
