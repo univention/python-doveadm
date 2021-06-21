@@ -92,17 +92,20 @@ class DovAdmCmd:
         """
         return JSON payload to be sent as-is to doveadm HTTP API
         """
+        params = {}
+        for key, val in (self._params or {}).items():
+            if val is None:
+                continue
+            if isinstance(val, bool):
+                val = int(val)
+            params[key] = val
         return json.dumps(
             # outer sequence with always one item
             (
                 # inner sequence for the command tuple
                 (
                     self._command,
-                    {
-                        key: val
-                        for key, val in (self._params or {}).items()
-                        if val is not None
-                    },
+                    params,
                     self.tag,
                 ),
             ),
