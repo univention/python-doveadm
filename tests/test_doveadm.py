@@ -11,6 +11,7 @@ import logging
 import pwd
 import grp
 import time
+import imaplib
 
 from doveadm import DovAdmCmd, DovAdm, DovAdmError
 from doveadm.mailbox import (
@@ -34,6 +35,8 @@ DOVEADM_URI = 'http://localhost:{:d}/doveadm/v1'.format(DOVEADM_PORT)
 DOVEADM_USERNAME = 'doveadm'
 DOVEADM_PASSWORD = 'secretpassword'
 DOVEADM_API_KEY = 'secretkey'
+
+DOVECOT_USER_PASSWORD = 'hmpf-ganz-sicher-hmpf'
 
 
 logging.getLogger().setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
@@ -96,6 +99,7 @@ class TestDovAdm(unittest.TestCase):
                     doveadm_port=DOVEADM_PORT,
                     imap_port=DOVECOT_IMAP_PORT,
                     pop3_port=DOVECOT_POP3_PORT,
+                    passdb_password=DOVECOT_USER_PASSWORD,
                     user=pwd.getpwuid(os.getuid()).pw_name,
                     group=grp.getgrgid(os.getgid()).gr_name,
                 )
@@ -128,6 +132,16 @@ class TestDovAdm(unittest.TestCase):
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
         self.assertEqual(res.tag, 'tag1')
+
+    def test000_imap_login(self):
+        """
+        only test a dummy IMAP login with username and password
+        """
+        with imaplib.IMAP4('127.0.0.1', port=DOVECOT_IMAP_PORT) as imap_conn:
+            imap_conn.login('samik', DOVECOT_USER_PASSWORD)
+            ityp, mbox_lst = imap_conn.list()
+        self.assertEqual(ityp, 'OK')
+        self.assertEqual(mbox_lst, [b'(\\HasNoChildren) "/" INBOX'])
 
     def test001_mailbox_commands(self):
         """
