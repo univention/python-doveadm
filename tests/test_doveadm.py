@@ -225,7 +225,7 @@ class TestDovAdm(unittest.TestCase):
         # TODO: find out whether that's the correct expected result
         res = dov_adm.submit(mbox_status_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
-        self.assertEqual(len(res.data), 1)
+        self.assertEqual(res.data, [])
         self.assertEqual(res.tag, 'tag2')
 
 
