@@ -16,9 +16,9 @@ import requests
 
 __all__ = (
     'DovAdm',
-    'DovAdmCommand',
+    'DovAdmCmd',
     'DovAdmError',
-    'DovAdmResponse',
+    'DovAdmResult',
 )
 
 
@@ -35,10 +35,37 @@ DOVADM_ERROR_MSG = {
 }
 
 
-class DovAdmCommand:
+class DovAdmResult:
+    """
+    generic base class for response messages
+    """
+
+    __slots__ = (
+        'rtype',
+        'data',
+        'tag',
+    )
+
+    rtype: str
+    data: dict
+    tag: str
+
+    def __init__(self, payload):
+        self.rtype, self.data, self.tag = payload
+
+    def __repr__(self) -> str:
+        return '{}(({!r}, {!r}, {!r}))'.format(
+            self.__class__.__name__,
+            self.rtype, self.data, self.tag,
+        )
+
+
+class DovAdmCmd:
     """
     Base class for doveadm commands
     """
+
+    res_class = DovAdmResult
 
     __slots__ = (
         '_command',
@@ -82,31 +109,6 @@ class DovAdmCommand:
         )
 
 
-class DovAdmResponse:
-    """
-    generic base class for response messages
-    """
-
-    __slots__ = (
-        'rtype',
-        'data',
-        'tag',
-    )
-
-    rtype: str
-    data: dict
-    tag: str
-
-    def __init__(self, payload):
-        self.rtype, self.data, self.tag = payload
-
-    def __repr__(self) -> str:
-        return '{}(({!r}, {!r}, {!r}))'.format(
-            self.__class__.__name__,
-            self.rtype, self.data, self.tag,
-        )
-
-
 class DovAdmError(BaseException):
     """
     generic exception class for error response
@@ -124,7 +126,7 @@ class DovAdmError(BaseException):
 
     def __init__(
             self,
-            response: Optional[DovAdmResponse] = None,
+            response: Optional[DovAdmResult] = None,
             msg: Optional[str] = None,
         ):
         BaseException.__init__(self)
@@ -191,7 +193,7 @@ class DovAdm:
         """
         return self._authz
 
-    def submit(self, cmd: DovAdmCommand):
+    def submit(self, cmd: DovAdmCmd):
         """
         submit a single command to dovadm and return the result
 
@@ -204,7 +206,7 @@ class DovAdm:
             headers=dict(Authorization=self.authorization),
             data=cmd.payload
         )
-        resp = DovAdmResponse(req.json()[0])
+        resp = cmd.res_class(req.json()[0])
         if resp.tag != cmd.tag:
             raise DovAdmError(
                 msg='Expected request tag {0!r} in result, got response tag {1!r}'.format(

@@ -12,11 +12,11 @@ import pwd
 import grp
 import time
 
-from doveadm import DovAdmCommand, DovAdm, DovAdmError
+from doveadm import DovAdmCmd, DovAdm, DovAdmError
 from doveadm.mailbox import (
-    MailboxCreate,
-    MailboxDelete,
-    MailboxStatus,
+    MailboxCreateCmd,
+    MailboxDeleteCmd,
+    MailboxStatusCmd,
 )
 
 DOVECOT_CONF_TMPL = os.environ.get(
@@ -117,7 +117,7 @@ class TestDovAdm(unittest.TestCase):
         """
         use a simple reload command to test basic authc and API key
         """
-        reload_cmd = DovAdmCommand('reload', tag='tag1')
+        reload_cmd = DovAdmCmd('reload', tag='tag1')
         dov_adm = DovAdm(DOVEADM_URI, username=DOVEADM_USERNAME, password=DOVEADM_PASSWORD)
         res = dov_adm.submit(reload_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
@@ -135,14 +135,14 @@ class TestDovAdm(unittest.TestCase):
         """
         dov_adm = DovAdm(DOVEADM_URI, api_key=DOVEADM_API_KEY)
         vmail_folder_path = os.path.join(self.vmail_dir, 'samik', 'mdbox', 'mailboxes', 'INBOX', 'myfolder')
-        mbox_create_cmd = MailboxCreate(
+        mbox_create_cmd = MailboxCreateCmd(
             user='samik',
             mailbox=[
                 "INBOX/myfolder"
             ],
             tag='tag1',
         )
-        mbox_status_cmd = MailboxStatus(
+        mbox_status_cmd = MailboxStatusCmd(
             user='samik',
             field=['all'],
             mailbox_mask=[
@@ -152,7 +152,7 @@ class TestDovAdm(unittest.TestCase):
             ],
             tag='tag2',
         )
-        mbox_delete_cmd = MailboxDelete(
+        mbox_delete_cmd = MailboxDeleteCmd(
             user='samik',
             mailbox=[
                 "INBOX/myfolder"

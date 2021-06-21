@@ -5,25 +5,25 @@ basic tests which do not require running dovecot server
 
 import unittest
 
-from doveadm import DovAdmCommand, DovAdm
-from doveadm.mailbox import MailboxCreate, MailboxDelete, MailboxStatus
+from doveadm import DovAdmCmd, DovAdm
+from doveadm.mailbox import MailboxCreateCmd, MailboxDeleteCmd, MailboxStatusCmd
 
 
-class Test001DovAdmCommand(unittest.TestCase):
+class Test001DovAdmCmd(unittest.TestCase):
     """
-    test class doveadm.DovAdmCommand
+    test class doveadm.DovAdmCmd
     """
 
     def test_001_payload(self):
         self.assertEqual(
-            DovAdmCommand(
+            DovAdmCmd(
                 'reload',
                 'tag1',
             ).payload,
             '[["reload", {}, "tag1"]]',
         )
         self.assertEqual(
-            DovAdmCommand(
+            DovAdmCmd(
                 'altmove',
                 'tag1',
                 user='samik',
@@ -40,14 +40,14 @@ class Test001DovAdmCommand(unittest.TestCase):
         )
 
 
-class Test001DovAdmCommand(unittest.TestCase):
+class Test001DovAdmCmd(unittest.TestCase):
     """
-    test class doveadm.mailbox.MailboxCreate
+    test class doveadm.mailbox.MailboxCreateCmd
     """
 
     def test000_mailbox_status(self):
         self.assertEqual(
-            MailboxStatus(
+            MailboxStatusCmd(
                 user='samik',
                 field=['all'],
                 mailbox_mask=[
@@ -62,7 +62,7 @@ class Test001DovAdmCommand(unittest.TestCase):
 
     def test001_mailbox_create(self):
         self.assertEqual(
-            MailboxCreate(
+            MailboxCreateCmd(
                 user='samik',
                 mailbox=[
                     "INBOX/myfolder"
@@ -74,7 +74,7 @@ class Test001DovAdmCommand(unittest.TestCase):
 
     def test002_mailbox_delete(self):
         self.assertEqual(
-            MailboxDelete(
+            MailboxDeleteCmd(
                 user='samik',
                 mailbox=[
                     "INBOX/myfolder"

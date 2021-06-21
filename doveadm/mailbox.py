@@ -9,15 +9,15 @@ License: TBD
 
 from typing import Optional, Sequence
 
-from . import DovAdmCommand
+from . import DovAdmCmd
 
 __all__ = (
-    'MailboxCreate',
-    'MailboxDelete',
+    'MailboxCreateCmd',
+    'MailboxDeleteCmd',
 )
 
 
-class MailboxCreate(DovAdmCommand):
+class MailboxCreateCmd(DovAdmCmd):
     """
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-create
     """
@@ -30,7 +30,7 @@ class MailboxCreate(DovAdmCommand):
             mailbox: Optional[Sequence[str]] = None,
             tag: Optional[str] = None,
         ):
-        DovAdmCommand.__init__(
+        DovAdmCmd.__init__(
             self,
             self.command,
             tag,
@@ -42,7 +42,7 @@ class MailboxCreate(DovAdmCommand):
         )
 
 
-class MailboxDelete(DovAdmCommand):
+class MailboxDeleteCmd(DovAdmCmd):
     """
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-delete
     """
@@ -57,7 +57,7 @@ class MailboxDelete(DovAdmCommand):
             mailbox: Optional[Sequence[str]] = None,
             tag: Optional[str] = None,
         ):
-        DovAdmCommand.__init__(
+        DovAdmCmd.__init__(
             self,
             self.command,
             tag,
@@ -71,7 +71,7 @@ class MailboxDelete(DovAdmCommand):
         )
 
 
-class MailboxStatus(DovAdmCommand):
+class MailboxStatusCmd(DovAdmCmd):
     """
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-status
     """
@@ -84,7 +84,7 @@ class MailboxStatus(DovAdmCommand):
             mailbox_mask: Optional[Sequence[str]] = None,
             tag: Optional[str] = None,
         ):
-        DovAdmCommand.__init__(
+        DovAdmCmd.__init__(
             self,
             self.command,
             tag,
