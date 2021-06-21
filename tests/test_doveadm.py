@@ -134,12 +134,15 @@ class TestDovAdm(unittest.TestCase):
         send CRUD operations on an example mailbox
         """
         dov_adm = DovAdm(DOVEADM_URI, api_key=DOVEADM_API_KEY)
-        vmail_folder_path = os.path.join(self.vmail_dir, 'samik', 'mdbox', 'mailboxes', 'INBOX', 'myfolder')
+        vmail_subdirs = (self.vmail_dir, 'samik', 'mdbox', 'mailboxes', 'INBOX', 'folder1')
+        mbox_names = (
+            'INBOX',
+            'INBOX/folder1',
+            'INBOX/folder2',
+        )
         mbox_create_cmd = MailboxCreateCmd(
             user='samik',
-            mailbox=[
-                "INBOX/myfolder"
-            ],
+            mailbox=mbox_names,
             tag='tag1',
         )
         mbox_status_cmd = MailboxStatusCmd(
@@ -154,9 +157,7 @@ class TestDovAdm(unittest.TestCase):
         )
         mbox_delete_cmd = MailboxDeleteCmd(
             user='samik',
-            mailbox=[
-                "INBOX/myfolder"
-            ],
+            mailbox=mbox_names,
             tag='tag3',
         )
         # create a new mailbox
@@ -164,16 +165,13 @@ class TestDovAdm(unittest.TestCase):
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
         self.assertEqual(res.tag, 'tag1')
-        self.assertTrue(os.path.isdir(vmail_folder_path))
+        self.assertTrue(os.path.isdir(os.path.join(*vmail_subdirs)))
         # query status of created mailbox
         res = dov_adm.submit(mbox_status_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
-        self.assertEqual(len(res.data), 2)
+        self.assertEqual(len(res.data), 3)
         self.assertEqual(res.tag, 'tag2')
-        self.assertEqual(
-            set(res.mailboxes),
-            {'INBOX', 'INBOX/myfolder'}
-        )
+        self.assertEqual(set(res.mailboxes), set(mbox_names))
         # re-create a new mailbox must fail
         with self.assertRaises(DovAdmError) as ctx:
             res = dov_adm.submit(mbox_create_cmd)
@@ -184,7 +182,7 @@ class TestDovAdm(unittest.TestCase):
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
         self.assertEqual(res.tag, 'tag3')
-        self.assertFalse(os.path.isdir(vmail_folder_path))
+        self.assertFalse(os.path.isdir(os.path.join(*vmail_subdirs[0:-1])))
         # deleting same mailbox again must fail
         with self.assertRaises(DovAdmError) as ctx:
             res = dov_adm.submit(mbox_delete_cmd)
