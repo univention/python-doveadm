@@ -9,7 +9,7 @@ License: TBD
 
 from typing import Optional, Sequence
 
-from . import DovAdmCmd
+from . import DovAdmCmd, DovAdmResult
 
 __all__ = (
     'MailboxCreateCmd',
@@ -71,11 +71,27 @@ class MailboxDeleteCmd(DovAdmCmd):
         )
 
 
+class MailboxStatusResult(DovAdmResult):
+    """
+    result class for
+    https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-status
+    """
+
+    @property
+    def mailboxes(self) -> Sequence[str]:
+        return [
+            mbox['mailbox']
+            for mbox in self.data
+        ]
+
+
 class MailboxStatusCmd(DovAdmCmd):
     """
+    request class for
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-status
     """
     command = 'mailboxStatus'
+    res_class = MailboxStatusResult
 
     def __init__(
             self,

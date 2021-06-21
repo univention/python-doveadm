@@ -171,7 +171,7 @@ class TestDovAdm(unittest.TestCase):
         self.assertEqual(len(res.data), 2)
         self.assertEqual(res.tag, 'tag2')
         self.assertEqual(
-            {mbox_dat['mailbox'] for mbox_dat in res.data},
+            set(res.mailboxes),
             {'INBOX', 'INBOX/myfolder'}
         )
         # re-create a new mailbox must fail
