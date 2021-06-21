@@ -40,7 +40,7 @@ class Test001DovAdmCmd(unittest.TestCase):
         )
 
 
-class Test001DovAdmCmd(unittest.TestCase):
+class Test002MailboxCmd(unittest.TestCase):
     """
     test class doveadm.mailbox.MailboxCreateCmd
     """
