@@ -7,6 +7,7 @@ import unittest
 
 from doveadm import DovAdmCmd, DovAdm
 from doveadm.mailbox import MailboxCreateCmd, MailboxDeleteCmd, MailboxStatusCmd
+from doveadm.misc import WhoCmd
 
 
 class Test001DovAdmCmd(unittest.TestCase):
@@ -115,6 +116,20 @@ class Test003AuthorizationHeader(unittest.TestCase):
     def test003_value_error(self):
           with self.assertRaises(ValueError):
               DovAdm('http://host:port/doveadm/v1', password='foo', api_key='bar')
+
+
+class Test004WhoCmd(unittest.TestCase):
+    """
+    test class doveadm.misc.WhoCmd
+    """
+
+    def test000_who(self):
+        self.assertEqual(
+            WhoCmd(
+                tag='tag1',
+            ).payload,
+            '[["who", {}, "tag1"]]'
+        )
 
 
 if __name__ == '__main__':

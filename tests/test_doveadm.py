@@ -19,6 +19,7 @@ from doveadm.mailbox import (
     MailboxDeleteCmd,
     MailboxStatusCmd,
 )
+from doveadm.misc import WhoCmd
 
 DOVECOT_CONF_TMPL = os.environ.get(
     'DOVECOT_CONF_TMPL',
@@ -136,12 +137,28 @@ class TestDovAdm(unittest.TestCase):
     def test000_imap_login(self):
         """
         only test a dummy IMAP login with username and password
+        and send who request
         """
+        dov_adm = DovAdm(DOVEADM_URI, api_key=DOVEADM_API_KEY)
         with imaplib.IMAP4('127.0.0.1', port=DOVECOT_IMAP_PORT) as imap_conn:
             imap_conn.login('samik', DOVECOT_USER_PASSWORD)
             ityp, mbox_lst = imap_conn.list()
+            res1 = dov_adm.submit(WhoCmd(separate=True, tag='tag1'))
+            res2 = dov_adm.submit(WhoCmd(tag='tag2'))
         self.assertEqual(ityp, 'OK')
         self.assertEqual(mbox_lst, [b'(\\HasNoChildren) "/" INBOX'])
+        self.assertEqual(res1.rtype, 'doveadmResponse')
+        self.assertEqual(res1.data[0]['connections'], '1')
+        self.assertEqual(res1.data[0]['ips'], '(127.0.0.1)')
+        self.assertEqual(res1.data[0]['username'], 'samik')
+        self.assertEqual(res1.usernames, ['samik'])
+        self.assertEqual(res1.tag, 'tag1')
+        self.assertEqual(res2.rtype, 'doveadmResponse')
+        self.assertEqual(res2.data[0]['connections'], '1')
+        self.assertEqual(res2.data[0]['ips'], '(127.0.0.1)')
+        self.assertEqual(res2.data[0]['username'], 'samik')
+        self.assertEqual(res2.usernames, ['samik'])
+        self.assertEqual(res2.tag, 'tag2')
 
     def test001_mailbox_commands(self):
         """
