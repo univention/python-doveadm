@@ -1,3 +1,2 @@
-ldap0
-pyasn1
-pyasn1_modules
+requests
+setuptools
