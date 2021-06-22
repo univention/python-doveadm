@@ -4,9 +4,7 @@ doveadm.__about__ - Meta information
 
 (c) 2021 by Univention GmbH
 
-This software is distributed under the terms of the
-Apache License Version 2.0 (Apache-2.0)
-https://www.apache.org/licenses/LICENSE-2.0
+License: TBD
 """
 
 import collections
@@ -21,7 +19,7 @@ __version__ = '.'.join(str(val) for val in __version_info__)
 __author__ = 'Michael Stroeder'
 __mail__ = 'michael@stroeder.com'
 __copyright__ = '(c) 2021 by Univention GmbH'
-__license__ = 'Apache-2.0'
+__license__ = 'TBD'
 
 __all__ = [
     '__version_info__',
