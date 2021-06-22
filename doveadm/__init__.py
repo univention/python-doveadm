@@ -9,7 +9,7 @@ License: TBD
 
 import time
 import json
-from base64 import standard_b64encode as b64_encode
+from base64 import b64encode
 from typing import Optional, Mapping
 
 import requests
@@ -178,12 +178,12 @@ class DovAdm:
         if password is not None:
             # generate HTTP basic authentication value
             _authz = b'Basic %s' % (
-                b64_encode(':'.join((username, password)).encode('utf-8')),
+                b64encode(':'.join((username, password)).encode('utf-8')),
             )
         elif api_key is not None:
             # generate HTTP basic authentication value
             _authz = b'X-Dovecot-API %s' % (
-                b64_encode(api_key.encode('utf-8')),
+                b64encode(api_key.encode('utf-8')),
             )
         else:
             raise ValueError('Either password or api_key needed for authentication!')
