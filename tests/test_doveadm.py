@@ -19,6 +19,7 @@ from doveadm.mailbox import (
     MailboxDeleteCmd,
     MailboxStatusCmd,
 )
+from doveadm.fs import FsDeleteCmd
 from doveadm.misc import WhoCmd
 
 DOVECOT_CONF_TMPL = os.environ.get(
@@ -191,6 +192,11 @@ class TestDovAdm(unittest.TestCase):
             mailbox=mbox_names,
             tag='tag3',
         )
+        fs_delete_cmd = FsDeleteCmd(
+            path=[os.path.join(*vmail_subdirs[0:2])],
+            recursive=True,
+            tag='tag4',
+        )
         # create a new mailbox
         res = dov_adm.submit(mbox_create_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
@@ -238,12 +244,12 @@ class TestDovAdm(unittest.TestCase):
             ityp, mbox_lst = imap_conn.list()
         self.assertEqual(ityp, 'OK')
         self.assertEqual(mbox_lst, [b'(\\HasNoChildren) "/" INBOX'])
-        # query status of deleted mailbox
-        # TODO: find out whether that's the correct expected result
-        res = dov_adm.submit(mbox_status_cmd)
+        # delete the whole user directory
+        res = dov_adm.submit(fs_delete_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
-        self.assertEqual(res.tag, 'tag2')
+        self.assertEqual(res.tag, 'tag4')
+        self.assertFalse(os.path.isdir(os.path.join(*vmail_subdirs[0:2])))
 
 
 if __name__ == '__main__':

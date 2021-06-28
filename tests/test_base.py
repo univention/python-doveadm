@@ -7,6 +7,7 @@ import unittest
 
 from doveadm import DovAdmCmd, DovAdm
 from doveadm.mailbox import MailboxCreateCmd, MailboxDeleteCmd, MailboxStatusCmd
+from doveadm.fs import FsDeleteCmd
 from doveadm.misc import WhoCmd
 
 
@@ -83,6 +84,27 @@ class Test002MailboxCmd(unittest.TestCase):
                 tag='tag1',
             ).payload,
             '[["mailboxDelete", {"user": "samik", "mailbox": ["INBOX/myfolder"]}, "tag1"]]',
+        )
+
+    def test003_fs_delete(self):
+        self.assertEqual(
+            FsDeleteCmd(
+                path=[
+                    '/path/to/vmail/samik',
+                ],
+                tag='tag1',
+            ).payload,
+            '[["fsDelete", {"path": ["/path/to/vmail/samik"], "fsDriver": "posix", "fsArgs": "dirs"}, "tag1"]]',
+        )
+        self.assertEqual(
+            FsDeleteCmd(
+                path=[
+                    '/path/to/vmail/samik',
+                ],
+                recursive=True,
+                tag='tag1',
+            ).payload,
+            '[["fsDelete", {"path": ["/path/to/vmail/samik"], "fsDriver": "posix", "fsArgs": "dirs", "recursive": 1}, "tag1"]]',
         )
 
 
