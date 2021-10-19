@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 doveadm - access the Doveadm HTTP API
 
@@ -10,7 +11,7 @@ License: TBD
 import time
 import json
 from base64 import b64encode
-from typing import Optional, Mapping
+from typing import Optional
 
 import requests
 
@@ -20,7 +21,6 @@ __all__ = (
     'DovAdmError',
     'DovAdmResult',
 )
-
 
 DOVADM_ERROR_MSG = {
     2: 'Success but mailbox changed during operation',
@@ -35,7 +35,7 @@ DOVADM_ERROR_MSG = {
 }
 
 
-class DovAdmResult:
+class DovAdmResult:  # pylint: disable=too-few-public-methods
     """
     generic base class for response messages
     """
@@ -54,13 +54,13 @@ class DovAdmResult:
         self.rtype, self.data, self.tag = payload
 
     def __repr__(self) -> str:
-        return '{}(({!r}, {!r}, {!r}))'.format(
-            self.__class__.__name__,
-            self.rtype, self.data, self.tag,
+        return (
+            f'{self.__class__.__name__}'
+            f'(({self.rtype!r}, {self.data!r}, {self.tag!r}))'
         )
 
 
-class DovAdmCmd:
+class DovAdmCmd:  # pylint: disable=too-few-public-methods
     """
     Base class for doveadm commands
     """
@@ -78,14 +78,14 @@ class DovAdmCmd:
     tag: str
 
     def __init__(
-            self,
-            command: str,
-            tag: Optional[str] = None,
-            **params,
-        ):
+        self,
+        command: str,
+        tag: Optional[str] = None,
+        **params,
+    ):
         self._command = command
         self._params = params
-        self.tag = tag or 'tag-{}'.format(time.time())
+        self.tag = tag or f'tag-{time.time()}'
 
     @property
     def payload(self):
@@ -128,25 +128,25 @@ class DovAdmError(BaseException):
     tag: str
 
     def __init__(
-            self,
-            response: Optional[DovAdmResult] = None,
-            msg: Optional[str] = None,
-        ):
+        self,
+        response: Optional[DovAdmResult] = None,
+        msg: Optional[str] = None,
+    ):
         BaseException.__init__(self)
         self._response = response
         self._msg = msg
         self.exit_code = self._response.data['exitCode']
 
     def __str__(self) -> str:
-        return 'doveadm error {:d}: {}'.format(
-            self.exit_code,
-            DOVADM_ERROR_MSG.get(self.exit_code, 'unknown'),
+        return (
+            f'doveadm error {self.exit_code:d}: '
+            f'{DOVADM_ERROR_MSG.get(self.exit_code, "unknown")}'
         )
 
     def __repr__(self) -> str:
-        return '{}(({!r}, msg={!r}))'.format(
-            self.__class__.__name__,
-            self._response, self._msg,
+        return (
+            f'{self.__class__.__name__}'
+            f'(({self._response!r}, msg={self._msg!r}))'
         )
 
 
@@ -164,16 +164,18 @@ class DovAdm:
     _authz: bytes
 
     def __init__(
-            self,
-            url: str,
-            username: str = 'doveadm',
-            password: str = None,
-            api_key: str = None,
-        ):
+        self,
+        url: str,
+        username: str = 'doveadm',
+        password: str = None,
+        api_key: str = None,
+    ):
         self._url = url
         # enforce using either one of the authentication methods
         if password is not None and api_key is not None:
-            raise ValueError('You must either use password or api_key, not both!')
+            raise ValueError(
+                'You must either use password or api_key, not both!'
+            )
         # prepare the Authorization header value
         if password is not None:
             # generate HTTP basic authentication value
@@ -186,7 +188,9 @@ class DovAdm:
                 b64encode(api_key.encode('utf-8')),
             )
         else:
-            raise ValueError('Either password or api_key needed for authentication!')
+            raise ValueError(
+                'Either password or api_key needed for authentication!'
+            )
         self._authz = _authz.decode('ascii')
 
     @property
@@ -207,14 +211,14 @@ class DovAdm:
         req = requests.post(
             self._url,
             headers=dict(Authorization=self.authorization),
-            data=cmd.payload
+            data=cmd.payload,
         )
         resp = cmd.res_class(req.json()[0])
         if resp.tag != cmd.tag:
             raise DovAdmError(
-                msg='Expected request tag {0!r} in result, got response tag {1!r}'.format(
-                    resp.tag,
-                    cmd.tag,
+                msg=(
+                    f'Expected request tag {resp.tag!r} in result, '
+                    f'got response tag {cmd.tag!r}'
                 )
             )
         if resp.rtype == 'error':

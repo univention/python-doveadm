@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 doveadm.fs - file system commands
 
@@ -9,28 +10,27 @@ License: TBD
 
 from typing import Optional, Sequence
 
-from . import DovAdmCmd, DovAdmResult
+from . import DovAdmCmd
 
-__all__ = (
-    'FsDeleteCmd',
-)
+__all__ = ('FsDeleteCmd', )
 
 
-class FsDeleteCmd(DovAdmCmd):
+class FsDeleteCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
     """
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-fs-delete
     """
+
     command = 'fsDelete'
 
     def __init__(
-            self,
-            path: Sequence[str],
-            fs_driver: str = 'posix',
-            fs_args: str = 'dirs',
-            recursive: Optional[bool] = None,
-            max_parallel: Optional[int] = None,
-            tag: Optional[str] = None,
-        ):
+        self,
+        path: Sequence[str],
+        fs_driver: str = 'posix',
+        fs_args: str = 'dirs',
+        recursive: Optional[bool] = None,
+        max_parallel: Optional[int] = None,
+        tag: Optional[str] = None,
+    ):
         DovAdmCmd.__init__(
             self,
             self.command,

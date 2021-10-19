@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 doveadm.__about__ - Meta information
 
@@ -9,7 +10,9 @@ License: TBD
 
 import collections
 
-VersionInfo = collections.namedtuple('VersionInfo', ('major', 'minor', 'micro'))
+VersionInfo = collections.namedtuple(
+    'VersionInfo', ('major', 'minor', 'micro')
+)
 __version_info__ = VersionInfo(
     major=0,
     minor=0,

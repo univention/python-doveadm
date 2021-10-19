@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 tests herein require running dovecot server
 """
@@ -23,8 +24,7 @@ from doveadm.fs import FsDeleteCmd
 from doveadm.misc import WhoCmd
 
 DOVECOT_CONF_TMPL = os.environ.get(
-    'DOVECOT_CONF_TMPL',
-    os.path.join('tests', 'conf', 'dovecot.conf.tmpl')
+    'DOVECOT_CONF_TMPL', os.path.join('tests', 'conf', 'dovecot.conf.tmpl')
 )
 DOVE_EXEC = os.environ.get('DOVE_EXEC', '/usr/sbin/dovecot')
 
@@ -32,14 +32,13 @@ DOVE_EXEC = os.environ.get('DOVE_EXEC', '/usr/sbin/dovecot')
 DOVECOT_POP3_PORT = 10110
 DOVECOT_IMAP_PORT = 10143
 DOVEADM_PORT = 8080
-DOVEADM_URI = 'http://localhost:{:d}/doveadm/v1'.format(DOVEADM_PORT)
+DOVEADM_URI = f'http://localhost:{DOVEADM_PORT:d}/doveadm/v1'
 
 DOVEADM_USERNAME = 'doveadm'
 DOVEADM_PASSWORD = 'secretpassword'
 DOVEADM_API_KEY = 'secretkey'
 
 DOVECOT_USER_PASSWORD = 'hmpf-ganz-sicher-hmpf'
-
 
 logging.getLogger().setLevel(os.environ.get('LOG_LEVEL', 'INFO').upper())
 
@@ -48,7 +47,6 @@ class TestDovAdm(unittest.TestCase):
     """
     test class doveadm.DovAdm
     """
-
     def _cleanup(self):
         """
         Recursively delete whole directory
@@ -57,9 +55,9 @@ class TestDovAdm(unittest.TestCase):
             return
         logging.debug('cleaning up %s ...', self.base_dir)
         for dirpath, dirnames, filenames in os.walk(
-                self.base_dir,
-                topdown=False
-            ):
+            self.base_dir,
+            topdown=False,
+        ):
             for filename in filenames:
                 logging.debug('remove %s', os.path.join(dirpath, filename))
                 os.remove(os.path.join(dirpath, filename))
@@ -72,25 +70,25 @@ class TestDovAdm(unittest.TestCase):
     def setUpClass(cls):
         cls.base_dir = os.path.join(
             os.environ.get('TMP', '/tmp'),
-            'dovecot-test-{:d}'.format(os.getpid()),
+            f'dovecot-test-{os.getpid():d}',
         )
         logging.debug('cls.base_dir = %r', cls.base_dir)
         state_dir = os.path.join(cls.base_dir, 'state')
         cls.vmail_dir = os.path.join(cls.base_dir, 'vmail')
         mail_temp_dir = os.path.join(cls.base_dir, 'tmp')
         for dirname in (
-                cls.base_dir,
-                state_dir,
-                cls.vmail_dir,
-                mail_temp_dir,
-            ):
+            cls.base_dir,
+            state_dir,
+            cls.vmail_dir,
+            mail_temp_dir,
+        ):
             if not os.path.isdir(dirname):
                 os.mkdir(dirname, mode=0o0755)
         log_path = os.path.join(cls.base_dir, 'dovecot.log')
         config_path = os.path.join(cls.base_dir, 'dovecot.conf.generated')
-        with open(DOVECOT_CONF_TMPL, 'r') as tmpl_file:
+        with open(DOVECOT_CONF_TMPL, 'r', encoding='utf-8') as tmpl_file:
             tmpl_str = tmpl_file.read()
-        with open(config_path, 'w') as config_file:
+        with open(config_path, 'w', encoding='utf-8') as config_file:
             config_file.write(
                 tmpl_str.format(
                     base_dir=cls.base_dir,
@@ -107,7 +105,7 @@ class TestDovAdm(unittest.TestCase):
                 )
             )
         dovecot_cmd = (DOVE_EXEC, '-F', '-c', config_path)
-        cls._proc = subprocess.Popen(dovecot_cmd)
+        cls._proc = subprocess.Popen(dovecot_cmd)  # noqa: E501; pylint: disable=bad-option-value
         time.sleep(1.0)
         if cls._proc.poll() is not None:
             raise RuntimeError('dovecot exited before opening port')
@@ -124,7 +122,9 @@ class TestDovAdm(unittest.TestCase):
         use a simple reload command to test basic authc and API key
         """
         reload_cmd = DovAdmCmd('reload', tag='tag1')
-        dov_adm = DovAdm(DOVEADM_URI, username=DOVEADM_USERNAME, password=DOVEADM_PASSWORD)
+        dov_adm = DovAdm(
+            DOVEADM_URI, username=DOVEADM_USERNAME, password=DOVEADM_PASSWORD
+        )
         res = dov_adm.submit(reload_cmd)
         self.assertEqual(res.rtype, 'doveadmResponse')
         self.assertEqual(res.data, [])
@@ -166,7 +166,14 @@ class TestDovAdm(unittest.TestCase):
         send CRUD operations on an example mailbox
         """
         dov_adm = DovAdm(DOVEADM_URI, api_key=DOVEADM_API_KEY)
-        vmail_subdirs = (self.vmail_dir, 'samik', 'mdbox', 'mailboxes', 'INBOX', 'folder1')
+        vmail_subdirs = (
+            self.vmail_dir,
+            'samik',
+            'mdbox',
+            'mailboxes',
+            'INBOX',
+            'folder1',
+        )
         mbox_names = (
             'INBOX',
             'INBOX/folder1',
@@ -216,11 +223,13 @@ class TestDovAdm(unittest.TestCase):
         self.assertEqual(ityp, 'OK')
         self.assertEqual(
             sorted(mbox_lst),
-            sorted([
-                b'(\\HasChildren) "/" INBOX',
-                b'(\\HasNoChildren) "/" INBOX/folder1',
-                b'(\\HasNoChildren) "/" INBOX/folder2',
-            ])
+            sorted(
+                [
+                    b'(\\HasChildren) "/" INBOX',
+                    b'(\\HasNoChildren) "/" INBOX/folder1',
+                    b'(\\HasNoChildren) "/" INBOX/folder2',
+                ]
+            ),
         )
         # re-create a new mailbox must fail
         with self.assertRaises(DovAdmError) as ctx:
@@ -237,7 +246,9 @@ class TestDovAdm(unittest.TestCase):
         with self.assertRaises(DovAdmError) as ctx:
             res = dov_adm.submit(mbox_delete_cmd)
         self.assertEqual(ctx.exception.exit_code, 68)
-        self.assertEqual(str(ctx.exception), 'doveadm error 68: User does not have session')
+        self.assertEqual(
+            str(ctx.exception), 'doveadm error 68: User does not have session'
+        )
         # list mailboxes via IMAP should return no results
         with imaplib.IMAP4('127.0.0.1', port=DOVECOT_IMAP_PORT) as imap_conn:
             imap_conn.login('samik', DOVECOT_USER_PASSWORD)

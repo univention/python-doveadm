@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 package/install python-doveadm
 """
@@ -12,7 +13,7 @@ PYPI_NAME = 'doveadm'
 BASEDIR = os.path.dirname(os.path.realpath(__file__))
 
 sys.path.insert(0, os.path.join(BASEDIR, PYPI_NAME))
-import __about__
+import __about__  # noqa: E402,E501; pylint: disable=import-error,wrong-import-position
 
 setup(
     name=PYPI_NAME,
@@ -24,11 +25,11 @@ setup(
     maintainer=__about__.__author__,
     maintainer_email=__about__.__mail__,
     url='',
-    download_url='https://pypi.org/project/%s/#files' % (PYPI_NAME),
+    download_url=f'https://pypi.org/project/{PYPI_NAME}/#files',
     keywords=['dovecot', 'doveadm', 'API'],
     packages=find_packages(exclude=['tests']),
     package_dir={'': '.'},
-    package_data = {
+    package_data={
         PYPI_NAME: ['py.typed'],
     },
     test_suite='tests',

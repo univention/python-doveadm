@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 doveadm.mailbox - mailbox commands
 
@@ -17,19 +18,20 @@ __all__ = (
 )
 
 
-class MailboxCreateCmd(DovAdmCmd):
+class MailboxCreateCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
     """
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-create
     """
+
     command = 'mailboxCreate'
 
     def __init__(
-            self,
-            user: str,
-            guid: Optional[str] = None,
-            mailbox: Optional[Sequence[str]] = None,
-            tag: Optional[str] = None,
-        ):
+        self,
+        user: str,
+        guid: Optional[str] = None,
+        mailbox: Optional[Sequence[str]] = None,
+        tag: Optional[str] = None,
+    ):
         DovAdmCmd.__init__(
             self,
             self.command,
@@ -42,21 +44,22 @@ class MailboxCreateCmd(DovAdmCmd):
         )
 
 
-class MailboxDeleteCmd(DovAdmCmd):
+class MailboxDeleteCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
     """
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-delete
     """
+
     command = 'mailboxDelete'
 
     def __init__(
-            self,
-            user: str,
-            require_empty: Optional[bool] = None,
-            recursive: Optional[bool] = None,
-            unsafe: Optional[bool] = None,
-            mailbox: Optional[Sequence[str]] = None,
-            tag: Optional[str] = None,
-        ):
+        self,
+        user: str,
+        require_empty: Optional[bool] = None,
+        recursive: Optional[bool] = None,
+        unsafe: Optional[bool] = None,
+        mailbox: Optional[Sequence[str]] = None,
+        tag: Optional[str] = None,
+    ):
         DovAdmCmd.__init__(
             self,
             self.command,
@@ -71,35 +74,33 @@ class MailboxDeleteCmd(DovAdmCmd):
         )
 
 
-class MailboxStatusResult(DovAdmResult):
+class MailboxStatusResult(DovAdmResult):  # noqa: E501; pylint: disable=too-few-public-methods
     """
     result class for
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-status
     """
-
     @property
     def mailboxes(self) -> Sequence[str]:
-        return [
-            mbox['mailbox']
-            for mbox in self.data
-        ]
+        """return mailboxes from results"""
+        return [mbox['mailbox'] for mbox in self.data]
 
 
-class MailboxStatusCmd(DovAdmCmd):
+class MailboxStatusCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
     """
     request class for
     https://doc.dovecot.org/admin_manual/doveadm_http_api/#doveadm-mailbox-status
     """
+
     command = 'mailboxStatus'
     res_class = MailboxStatusResult
 
     def __init__(
-            self,
-            user: str,
-            field: Optional[Sequence[str]] = None,
-            mailbox_mask: Optional[Sequence[str]] = None,
-            tag: Optional[str] = None,
-        ):
+        self,
+        user: str,
+        field: Optional[Sequence[str]] = None,
+        mailbox_mask: Optional[Sequence[str]] = None,
+        tag: Optional[str] = None,
+    ):
         DovAdmCmd.__init__(
             self,
             self.command,
