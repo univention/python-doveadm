@@ -1,0 +1,14 @@
+[MESSAGES CONTROL]
+
+# """R0801: Similar lines in 2 files"""
+# False positives can not be excluded line by line
+# Please check manually!
+
+# """E1136: Value 'Optional' is unsubscriptable (unsubscriptable-object)"""
+# Too many false positives
+
+disable=duplicate-code,unsubscriptable-object
+
+max-args: 7
+
+# [EOF]
