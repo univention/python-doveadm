@@ -1,0 +1,124 @@
+---
+
+# Only docker/compose:debian-X.XX.X seems to be working with dind
+# out of the box the alpine as of 1.28.0 does not because of a mismatch issue
+# between "musl libc" vs glibc:
+# https://github.com/docker/compose/issues/3465
+# https://stackoverflow.com/a/42322893
+
+stages:
+- lint-stage
+- build-builder-stage
+- build-stage
+- test-stage
+- publish-stage
+
+variables:
+  INTERNAL_DOCKER_REPO: artifacts.knut.univention.de
+  DOCKERHUB_CACHE: ${INTERNAL_DOCKER_REPO}/dockerhub_proxy_cache/
+  UPX_IMAGE_REGISTRY: ${INTERNAL_DOCKER_REPO}/upx/
+  DOCKER_TLS_CERTDIR: ''
+  DOCKER_HOST: tcp://docker:2375
+
+default:
+  before_script:
+  - mkdir "$HOME/.docker/"
+  - echo "${DOCKER_AUTH_CONFIG}" > "${HOME}/.docker/config.json"
+
+pre-commit-job:
+  tags:
+  - docker
+  stage: lint-stage
+  image:
+    name: ${UPX_IMAGE_REGISTRY}upx-pre-commit:latest
+    entrypoint: [/bin/ash, -c]
+  variables:
+    PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.cache/pip
+    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
+  cache:
+    paths:
+    - .cache/pip
+    - .cache/pre-commit
+    - venv/
+  before_script:
+  - echo "Explicitly skip the default action docker login"
+  script:
+  # pip/ruamel.yaml.clib depends on
+  #   gcc to compile test_ruamel_yaml.c
+  #   Scrt1.o and crti.o from musl-dev
+  #   Python.h from python3-dev
+  - apk add --no-cache
+      gcc~=10.2.1_pre1
+      musl-dev~=1.2.2
+      python3-dev~=3.8.10
+  # Compose lint would fail without the referenced env files
+  - pre-commit run --all-files
+
+build-builder-stage:
+  tags:
+  - docker
+  image: ${DOCKERHUB_CACHE}library/docker:20.10.10
+  stage: build-builder-stage
+  services:
+  - name: ${DOCKERHUB_CACHE}library/docker:20.10.10-dind
+    alias: docker
+    command:
+    - --insecure-registry=artifacts.knut.univention.de
+    - --tls=false
+  script:
+  - /bin/ash build-builder.sh
+
+build-job:
+  tags:
+  - docker
+  image: ${DOCKERHUB_CACHE}library/docker:20.10.10
+  stage: build-stage
+  services:
+  - name: ${DOCKERHUB_CACHE}library/docker:20.10.10-dind
+    alias: docker
+    command:
+    - --insecure-registry=artifacts.knut.univention.de
+    - --tls=false
+  script:
+  - apk add
+      python3~=3.9.5
+      py3-setuptools~=52.0.0
+  - /bin/ash build-deb.sh
+  artifacts:
+    name: "${CI_JOB_NAME}-${CI_JOB_STAGE}-${CI_COMMIT_REF_NAME}"
+    paths:
+    - build/deb_dist/
+
+test-job:
+  tags:
+  - docker
+  image: ${DOCKERHUB_CACHE}library/debian:bullseye-slim
+  stage: test-stage
+  before_script:
+  - echo "Explicitly skip the default action docker login"
+  script:
+  - apt-get update
+  - apt-get --assume-yes --verbose-versions --no-install-recommends install
+      dovecot-imapd=1:2.3.13+*
+      dovecot-lmtpd=1:2.3.13+*
+      dovecot-pop3d=1:2.3.13+*
+      libpython3-stdlib=3.9.2-*
+      python3-minimal=3.9.2-*
+      python3-requests=2.25.1+*
+  # currently test001_mailbox_commands fails with
+  # doveadm.DovAdmError: doveadm error 75: Temporary error
+  #- python3 -B -m unittest -v
+
+publish-job:
+  image: ${DOCKERHUB_CACHE}library/debian:bullseye-slim
+  stage: publish-stage
+  tags:
+  - docker
+  only:
+  - main
+  before_script:
+  - echo "Explicitly skip the default action docker login"
+  script:
+  - echo "TODO publish"
+
+...
