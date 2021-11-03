@@ -87,7 +87,7 @@ build-job:
   artifacts:
     name: "${CI_JOB_NAME}-${CI_JOB_STAGE}-${CI_COMMIT_REF_NAME}"
     paths:
-    - build/deb_dist/
+    - dist/deb_dist/
 
 test-job:
   tags:
