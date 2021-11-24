@@ -84,10 +84,12 @@ build-job:
       python3~=3.9.5
       py3-setuptools~=52.0.0
   - /bin/ash build-deb.sh
+  - mv dist/deb_dist/* .
   artifacts:
     name: "${CI_JOB_NAME}-${CI_JOB_STAGE}-${CI_COMMIT_REF_NAME}"
     paths:
-    - dist/deb_dist/
+    - doveadm_*.*
+    - python3-doveadm_*_all.deb
 
 test-job:
   tags:
