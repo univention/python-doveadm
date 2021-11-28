@@ -90,6 +90,7 @@ build-job:
     paths:
     - doveadm_*.*
     - python3-doveadm_*_all.deb
+    expire_in: 6 mos
 
 test-job:
   tags:
