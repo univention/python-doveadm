@@ -1,6 +1,6 @@
-#!/bin/ash
+#!/bin/sh
 # shellcheck shell=dash
-set -euxo pipefail
+set -eux
 
 BUILD_IMAGE_NAME=${BUILD_IMAGE_NAME:-debian}
 BUILD_IMAGE_TAG=${BUILD_IMAGE_TAG:-bullseye-slim}
