@@ -112,7 +112,7 @@ class DovAdmCmd:  # pylint: disable=too-few-public-methods
         )
 
 
-class DovAdmError(BaseException):
+class DovAdmError(Exception):
     """
     generic exception class for error response
     """
@@ -132,7 +132,7 @@ class DovAdmError(BaseException):
         response: Optional[DovAdmResult] = None,
         msg: Optional[str] = None,
     ):
-        BaseException.__init__(self)
+        Exception.__init__(self)
         self._response = response
         self._msg = msg
         self.exit_code = self._response.data['exitCode']
