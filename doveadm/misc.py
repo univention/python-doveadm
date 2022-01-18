@@ -41,8 +41,7 @@ class WhoCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         separate: Optional[bool] = None,
         tag: Optional[str] = None,
     ):
-        DovAdmCmd.__init__(
-            self,
+        super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
             **dict(

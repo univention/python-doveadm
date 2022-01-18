@@ -32,8 +32,7 @@ class MailboxCreateCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         mailbox: Optional[Sequence[str]] = None,
         tag: Optional[str] = None,
     ):
-        DovAdmCmd.__init__(
-            self,
+        super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
             **dict(
@@ -60,8 +59,7 @@ class MailboxDeleteCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         mailbox: Optional[Sequence[str]] = None,
         tag: Optional[str] = None,
     ):
-        DovAdmCmd.__init__(
-            self,
+        super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
             **dict(
@@ -101,8 +99,7 @@ class MailboxStatusCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         mailbox_mask: Optional[Sequence[str]] = None,
         tag: Optional[str] = None,
     ):
-        DovAdmCmd.__init__(
-            self,
+        super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
             **dict(

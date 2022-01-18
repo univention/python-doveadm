@@ -31,8 +31,7 @@ class FsDeleteCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         max_parallel: Optional[int] = None,
         tag: Optional[str] = None,
     ):
-        DovAdmCmd.__init__(
-            self,
+        super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
             **dict(

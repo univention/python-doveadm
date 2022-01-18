@@ -132,7 +132,7 @@ class DovAdmError(Exception):
         response: Optional[DovAdmResult] = None,
         msg: Optional[str] = None,
     ):
-        Exception.__init__(self)
+        super().__init__()
         self._response = response
         self._msg = msg
         self.exit_code = self._response.data['exitCode']
