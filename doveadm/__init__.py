@@ -213,8 +213,27 @@ class DovAdm:
             headers=dict(Authorization=self.authorization),
             data=cmd.payload,
         )
-        result = cmd.res_class(response.json()[0])
+
+        if response.status_code != 200:
+            raise DovAdmError(
+                msg=(
+                    f'Web server replied with status-code '
+                    f'{response.status_code}, got text {response.text!r}'
+                )
+            )
+        try:
+            content = response.json()
+        except json.decoder.JSONDecodeError as err:
+            raise DovAdmError(
+                msg=(
+                    f'Failed to parse JSON of web servers response, '
+                    f'got text {response.text!r}'
+                )
+            ) from err
+        result = cmd.res_class(content[0])
+
         if result.tag != cmd.tag:
+
             raise DovAdmError(
                 msg=(
                     f'Expected request tag {result.tag!r} in result, '
