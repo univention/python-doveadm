@@ -208,19 +208,19 @@ class DovAdm:
         In theory it is possible to send multiple commands in one HTTP request
         but doveadm docs explicitly recommend not to make use of that.
         """
-        req = requests.post(
+        response = requests.post(
             self._url,
             headers=dict(Authorization=self.authorization),
             data=cmd.payload,
         )
-        resp = cmd.res_class(req.json()[0])
-        if resp.tag != cmd.tag:
+        result = cmd.res_class(response.json()[0])
+        if result.tag != cmd.tag:
             raise DovAdmError(
                 msg=(
-                    f'Expected request tag {resp.tag!r} in result, '
+                    f'Expected request tag {result.tag!r} in result, '
                     f'got response tag {cmd.tag!r}'
                 )
             )
-        if resp.rtype == 'error':
-            raise DovAdmError(response=resp)
-        return resp
+        if result.rtype == 'error':
+            raise DovAdmError(response=result)
+        return result
