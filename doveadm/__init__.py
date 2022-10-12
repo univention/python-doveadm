@@ -97,7 +97,7 @@ class DovAdmCmd:  # pylint: disable=too-few-public-methods
             if val is None:
                 continue
             if isinstance(val, bool):
-                val = int(val)
+                val = str(val).lower()
             params[key] = val
         return json.dumps(
             # outer sequence with always one item
