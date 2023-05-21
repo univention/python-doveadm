@@ -14,8 +14,6 @@ stages:
 - publish-stage
 
 variables:
-  UV_HOST_HARBOR: artifacts.knut.univention.de
-  DOCKERHUB_CACHE: ${UV_HOST_HARBOR}/dockerhub_proxy_cache/
   DOCKER_TLS_CERTDIR: ''
   DOCKER_HOST: tcp://docker:2375
 
@@ -48,10 +46,10 @@ pre-commit-job:
 build-builder-stage:
   tags:
   - docker
-  image: ${DOCKERHUB_CACHE}library/docker:20.10.10
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10
   stage: build-builder-stage
   services:
-  - name: ${DOCKERHUB_CACHE}library/docker:20.10.10-dind
+  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10-dind
     alias: docker
     command:
     - --insecure-registry=artifacts.knut.univention.de
@@ -62,10 +60,10 @@ build-builder-stage:
 build-job:
   tags:
   - docker
-  image: ${DOCKERHUB_CACHE}library/docker:20.10.10
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10
   stage: build-stage
   services:
-  - name: ${DOCKERHUB_CACHE}library/docker:20.10.10-dind
+  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10-dind
     alias: docker
     command:
     - --insecure-registry=artifacts.knut.univention.de
@@ -86,7 +84,7 @@ build-job:
 test-job:
   tags:
   - docker
-  image: ${DOCKERHUB_CACHE}library/debian:bullseye-slim
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/debian:bullseye-slim
   stage: test-stage
   before_script:
   - echo "Explicitly skip the default action docker login"
@@ -104,7 +102,7 @@ test-job:
   #- python3 -B -m unittest -v
 
 publish-job:
-  image: ${DOCKERHUB_CACHE}library/debian:bullseye-slim
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/debian:bullseye-slim
   stage: publish-stage
   tags:
   - docker
