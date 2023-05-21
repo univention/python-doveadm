@@ -212,6 +212,7 @@ class DovAdm:
             self._url,
             headers={'Authorization': self.authorization},
             data=cmd.payload,
+            timeout=60,
         )
 
         if response.status_code != 200:
