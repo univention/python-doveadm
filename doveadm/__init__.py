@@ -210,7 +210,7 @@ class DovAdm:
         """
         response = requests.post(
             self._url,
-            headers=dict(Authorization=self.authorization),
+            headers={'Authorization': self.authorization},
             data=cmd.payload,
         )
 

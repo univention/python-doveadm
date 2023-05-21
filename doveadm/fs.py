@@ -34,11 +34,11 @@ class FsDeleteCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
-            **dict(
-                path=path,
-                fsDriver=fs_driver,
-                fsArgs=fs_args,
-                recursive=recursive,
-                maxParallel=max_parallel,
-            ),
+            **{
+                'path': path,
+                'fsDriver': fs_driver,
+                'fsArgs': fs_args,
+                'recursive': recursive,
+                'maxParallel': max_parallel,
+            },
         )

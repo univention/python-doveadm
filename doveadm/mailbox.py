@@ -35,11 +35,11 @@ class MailboxCreateCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
-            **dict(
-                user=user,
-                guid=guid,
-                mailbox=mailbox,
-            ),
+            **{
+                'user': user,
+                'guid': guid,
+                'mailbox': mailbox,
+            },
         )
 
 
@@ -62,13 +62,13 @@ class MailboxDeleteCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
-            **dict(
-                user=user,
-                requireEmpty=require_empty,
-                recursive=recursive,
-                unsafe=unsafe,
-                mailbox=mailbox,
-            ),
+            **{
+                'user': user,
+                'requireEmpty': require_empty,
+                'recursive': recursive,
+                'unsafe': unsafe,
+                'mailbox': mailbox,
+            },
         )
 
 
@@ -102,9 +102,9 @@ class MailboxStatusCmd(DovAdmCmd):  # pylint: disable=too-few-public-methods
         super().__init__(  # pylint: disable=too-many-function-args
             self.command,
             tag,
-            **dict(
-                user=user,
-                field=field,
-                mailboxMask=mailbox_mask,
-            ),
+            **{
+                'user': user,
+                'field': field,
+                'mailboxMask': mailbox_mask,
+            },
         )
