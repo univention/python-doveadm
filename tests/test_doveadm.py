@@ -105,10 +105,10 @@ class TestDovAdm(unittest.TestCase):
                 )
             )
         dovecot_cmd = (DOVE_EXEC, '-F', '-c', config_path)
-        cls._proc = subprocess.Popen(dovecot_cmd)  # noqa: E501; pylint: disable=bad-option-value
-        time.sleep(1.0)
-        if cls._proc.poll() is not None:
-            raise RuntimeError('dovecot exited before opening port')
+        with subprocess.Popen(dovecot_cmd) as cls._proc:
+            time.sleep(1.0)
+            if cls._proc.poll() is not None:
+                raise RuntimeError('dovecot exited before opening port')
         logging.debug('Started dovecot server with %r', dovecot_cmd)
 
     @classmethod
