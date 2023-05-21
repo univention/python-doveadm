@@ -43,14 +43,6 @@ pre-commit-job:
   before_script:
   - echo "Explicitly skip the default action docker login"
   script:
-  # pip/ruamel.yaml.clib depends on
-  #   gcc to compile test_ruamel_yaml.c
-  #   Scrt1.o and crti.o from musl-dev
-  #   Python.h from python3-dev
-  - apk add --no-cache
-      gcc~=10.3.1
-      musl-dev~=1.2.2
-      python3-dev~=3.9.5
   # Compose lint would fail without the referenced env files
   - pre-commit run --all-files
 
