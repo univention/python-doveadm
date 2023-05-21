@@ -16,7 +16,6 @@ stages:
 variables:
   UV_HOST_HARBOR: artifacts.knut.univention.de
   DOCKERHUB_CACHE: ${UV_HOST_HARBOR}/dockerhub_proxy_cache/
-  UPX_IMAGE_REGISTRY: ${UV_HOST_HARBOR}/upx/
   DOCKER_TLS_CERTDIR: ''
   DOCKER_HOST: tcp://docker:2375
 
@@ -30,7 +29,7 @@ pre-commit-job:
   - docker
   stage: lint-stage
   image:
-    name: ${UPX_IMAGE_REGISTRY}upx-pre-commit:latest
+    name: 'gitregistry.knut.univention.de/univention/customers/dataport/upx/container-pre-commit/upx-pre-commit:latest'
     entrypoint: [/bin/ash, -c]
   variables:
     PIP_CACHE_DIR: ${CI_PROJECT_DIR}/.cache/pip
