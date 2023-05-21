@@ -46,10 +46,10 @@ pre-commit-job:
 build-builder-stage:
   tags:
   - docker
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1
   stage: build-builder-stage
   services:
-  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10-dind
+  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1-dind
     alias: docker
     command:
     - --insecure-registry=artifacts.knut.univention.de
@@ -60,18 +60,18 @@ build-builder-stage:
 build-job:
   tags:
   - docker
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1
   stage: build-stage
   services:
-  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:20.10.10-dind
+  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1-dind
     alias: docker
     command:
     - --insecure-registry=artifacts.knut.univention.de
     - --tls=false
   script:
   - apk add
-      python3~=3.9.16
-      py3-setuptools~=52.0.0
+      python3~=3.11.3
+      py3-setuptools~=67.7.2
   - /bin/ash build-deb.sh
   - mv dist/deb_dist/* .
   artifacts:
