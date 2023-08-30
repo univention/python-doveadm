@@ -46,10 +46,10 @@ pre-commit-job:
 build-builder-stage:
   tags:
   - docker
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.5
   stage: build-builder-stage
   services:
-  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1-dind
+  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.5-dind
     alias: docker
     command:
     - --insecure-registry=artifacts.knut.univention.de
@@ -60,10 +60,10 @@ build-builder-stage:
 build-job:
   tags:
   - docker
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.5
   stage: build-stage
   services:
-  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.1-dind
+  - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/library/docker:24.0.5-dind
     alias: docker
     command:
     - --insecure-registry=artifacts.knut.univention.de
