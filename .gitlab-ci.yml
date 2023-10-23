@@ -70,8 +70,8 @@ build-job:
     - --tls=false
   script:
   - apk add
-      python3~=3.11.5
-      py3-setuptools~=67.7.2
+      python3~=3.11
+      py3-setuptools~=67.7
   - /bin/ash build-deb.sh
   - mv dist/deb_dist/* .
   artifacts:
